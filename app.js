@@ -9,6 +9,92 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const employees = [];
+
+function ask() {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'Select Employee type:',
+                name: 'type',
+                choices: [
+                    'Manager',
+                    'Engineer',
+                    'Intern'
+                ]
+            },
+            {
+                type: 'input',
+                message: 'What is their name?',
+                name: 'name',
+            },
+            {
+                type: 'input',
+                message: 'What is their ID number?',
+                name: 'id',
+            },
+            {
+                type: 'input',
+                message: 'What is their email address?',
+                name: 'email',
+            },
+            {
+                type: 'input',
+                message: 'What is their office number?',
+                name: 'officeNumber',
+                when: (answers) => answers.type === 'Manager'
+            },
+            {
+                type: 'input',
+                message: 'What is their GitHub username?',
+                name: 'github',
+                when: (answers) => answers.type === 'Engineer'
+            },
+            {
+                type: 'input',
+                message: 'What is the name of their school?',
+                name: 'school',
+                when: (answers) => answers.type === 'Intern'
+            },
+            {
+                type: 'list',
+                message: 'Would you like to add another employee?',
+                name: 'addEmployee',
+                choices: [
+                    'Yes',
+                    'No'
+                ]
+            }
+        ])
+
+        .then(answers => {
+            if (answers.type === 'Manager') {
+                const emp = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+                employees.push(emp);
+                console.log(JSON.stringify(employees));
+            } else if (answers.type === 'Engineer') {
+                const emp2 = new Engineer(answers.name, answers.id, answers.email, answers.github);
+                employees.push(emp2);
+                console.log(JSON.stringify(employees, null, 2));
+            } else if (answers.type === 'Intern') {
+                const emp3 = new Intern(answers.name, answers.id, answers.email, answers.school);
+                employees.push(emp3);
+                console.log(JSON.stringify(employees, null, 2));
+            }
+
+            if (answers.addEmployee === 'Yes') {
+                ask();
+            }
+            
+        })
+
+    // console.log(JSON.stringify(employees, null, 2));
+
+};
+
+ask();
+
 
 
 // Write code to use inquirer to gather information about the development team members,
